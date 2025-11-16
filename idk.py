@@ -1,15 +1,14 @@
 import time
 import os
 
+print("skibidi")
+
 def epsteinList():
     return [d for d in os.listdir("/Volumes") if d not in ("Macintosh HD",)]
 
 
-def gameStart():
+def blegh():
     alreadySeen = set(epsteinList())
-
-    print("waiting for drive to start the game")
-
 
     while True:
         time.sleep(1)
@@ -21,13 +20,19 @@ def gameStart():
                 usb_path = f"/Volumes/{usb_name}"
                 game_folder = os.path.join(usb_path, "taggie_data")
                 os.makedirs(game_folder, exist_ok=True)
-                print(f"Game started! USB {usb_name} detected.")
+                print(f"{usb_name} detected.")
 
-                with open(os.path.join(game_folder, ".taggie"), "w") as f:
-                    f.write("X")
-                return True
+                if open(os.path.join(game_folder, ".taggie"), "rt").read() == "X":
+                    print("yay")
+                    print("deleting file")
+                    os.remove(os.path.join(game_folder, ".taggie"))
+                    return True
+                else:
+                    print("kms")
+            except FileNotFoundError:
+                print("kmser")
             except PermissionError:
                 print("fuckass")
-            break
 
-gameStart()
+
+blegh()
