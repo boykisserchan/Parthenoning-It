@@ -1,33 +1,23 @@
-import http.server
-import socketserver
-from pathlib import Path
-from urllib.parse import urlparse
+import time
+import os
 
-port = 4173
-dir = "taggie/build"
+def epsteinList():
+    return [d for d in os.listdir("/Volumes") if d not in ("Macintosh HD",)]
 
-class SPAHandler(http.server.SimpleHTTPRequestHandler):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, directory=dir, **kwargs)
+alreadySeen = set(epsteinList())
 
-    def do_GET(self):
-        parsed_path = urlparse(self.path).path
+print("waiting for drive to start the game")
 
-        # Strip leading slash
-        stripped = parsed_path.lstrip("/")
-
-        # Check if path exists
-        path = Path(self.directory) / stripped
-        if path.is_file() or path.is_dir():
-            return super().do_GET()
-
-        # Fallback for SPA routes, including base path
-        if stripped.startswith("taggie/"):
-            self.path = "/404.html"  # SvelteKit static fallback
-        else:
-            self.path = "/404.html"
-        return super().do_GET()
-
-with socketserver.TCPServer(("", port), SPAHandler) as httpd:
-    print(f"serving cunt @ http://localhost:{port}/taggie")
-    httpd.serve_forever()
+while True:
+    time.sleep(1)
+    current_drives = set(epsteinList())
+    new_drives = current_drives - alreadySeen
+    if new_drives:
+        usb_name = new_drives.pop()
+        usb_path = f"/Volumes/{usb_name}"
+        game_folder = os.path.join(usb_path, "taggie_data")
+        os.makedirs(game_folder, exist_ok=True)
+        print(f"Game started! USB {usb_name} detected.")
+        with open(os.path.join(game_folder, ".taggie"), "w") as f:
+            f.write("X")
+        break
