@@ -21,4 +21,15 @@ table = api.table(id, tbl)
 def startNewCuntshitter():
     table.create({"MAC A":mac})
 
-startNewCuntshitter()
+def checkForGame():
+    records = table.all()
+
+    for i in records:
+        if i["fields"].get("MAC A") is not None:
+            if i["fields"].get("MAC A") == mac:
+                #TODO: stop games happening from that device.
+                pass
+            elif i["fields"].get("MAC A") :
+
+
+# startNewCuntshitter()
